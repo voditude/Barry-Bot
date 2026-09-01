@@ -1,0 +1,563 @@
+<!doctype html>
+<title>Totient &amp; Möbius</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#eef2f6;
+  --ink:#16233b;
+  --ink-soft:#445269;
+  --ink-faint:#7686a0;
+  --rule:#c7d2dc;
+  --panel:#e2e9ef;
+  --panel-border:#c2cfdb;
+  --accent:#b8721f;
+  --accent-ink:#7a4b12;
+  --accent-soft:#f0dcb8;
+  --removed:#9aa8b8;
+  --kept-bg:#f0dcb8;
+  --kept-border:#b8721f;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101821;
+    --ink:#e7ecf2;
+    --ink-soft:#a3b2c6;
+    --ink-faint:#6d7c92;
+    --rule:#28374b;
+    --panel:#17222f;
+    --panel-border:#2a3a4f;
+    --accent:#e0a34c;
+    --accent-ink:#f4c37c;
+    --accent-soft:#3a2c15;
+    --removed:#4d5c72;
+    --kept-bg:#3a2c15;
+    --kept-border:#e0a34c;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101821;
+  --ink:#e7ecf2;
+  --ink-soft:#a3b2c6;
+  --ink-faint:#6d7c92;
+  --rule:#28374b;
+  --panel:#17222f;
+  --panel-border:#2a3a4f;
+  --accent:#e0a34c;
+  --accent-ink:#f4c37c;
+  --accent-soft:#3a2c15;
+  --removed:#4d5c72;
+  --kept-bg:#3a2c15;
+  --kept-border:#e0a34c;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  line-height:1.6;
+}
+h1,h2,h3{
+  font-family:"IBM Plex Serif", Georgia, serif;
+  text-wrap:balance;
+  color:var(--ink);
+  margin:0;
+}
+code, .mono, .matrix, .sieve-num{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
+
+.page{ max-width:1180px; margin:0 auto; padding:0 24px 80px; }
+
+/* ---------- masthead ---------- */
+.masthead{
+  padding:56px 0 36px;
+  border-bottom:1px solid var(--rule);
+  margin-bottom:32px;
+}
+.eyebrow{
+  font-family:"IBM Plex Mono", monospace;
+  font-size:12.5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent-ink);
+  margin-bottom:14px;
+}
+.masthead h1{
+  font-size:clamp(30px,4vw,44px);
+  font-weight:600;
+  max-width:16ch;
+}
+.masthead p{
+  max-width:62ch;
+  color:var(--ink-soft);
+  font-size:16.5px;
+  margin-top:14px;
+}
+
+/* ---------- layout ---------- */
+.layout{ display:grid; grid-template-columns:220px minmax(0,1fr); gap:56px; align-items:start; }
+@media (max-width:820px){ .layout{ grid-template-columns:1fr; } .toc{ position:static !important; } }
+
+.toc{ position:sticky; top:24px; }
+.toc ol{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px; }
+.toc a{
+  display:flex; gap:10px; align-items:baseline;
+  padding:6px 8px; margin:0 -8px; border-radius:3px;
+  text-decoration:none; color:var(--ink-soft); font-size:13.5px;
+}
+.toc a:hover{ background:var(--panel); color:var(--ink); }
+.toc .n{ font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-faint); width:1.6em; flex:none; }
+
+main{ min-width:0; max-width:700px; }
+
+section{ padding:44px 0; border-bottom:1px solid var(--rule); }
+section:last-of-type{ border-bottom:none; }
+section h2{
+  font-size:22px; font-weight:600;
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:18px;
+  scroll-margin-top:24px;
+}
+section h2 .n{
+  font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:400;
+  color:var(--accent-ink); border:1px solid var(--panel-border); border-radius:3px;
+  padding:2px 7px;
+}
+section p{ margin:0 0 14px; color:var(--ink); }
+section p.soft{ color:var(--ink-soft); }
+strong{ color:var(--ink); font-weight:600; }
+em.term{ font-style:normal; font-weight:600; color:var(--accent-ink); }
+
+/* ---------- panels ---------- */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--panel-border);
+  border-radius:4px;
+  padding:18px 20px;
+  margin:20px 0;
+}
+.panel .label{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--accent-ink); margin-bottom:10px; display:block;
+}
+.panel p:last-child{ margin-bottom:0; }
+
+.check{
+  display:flex; gap:10px; align-items:flex-start;
+  background:var(--kept-bg); border:1px solid var(--kept-border);
+  border-radius:4px; padding:10px 14px; margin:14px 0; font-size:14.5px;
+}
+.check .mark{ font-weight:600; color:var(--accent-ink); font-family:"IBM Plex Mono",monospace; }
+
+/* ---------- figures ---------- */
+figure{ margin:24px 0; text-align:center; }
+figure svg{ max-width:100%; height:auto; }
+figcaption{ font-size:13px; color:var(--ink-faint); margin-top:10px; max-width:52ch; margin-left:auto; margin-right:auto; }
+
+/* ---------- sieve grid ---------- */
+.sieve{
+  display:grid; grid-template-columns:repeat(10,1fr); gap:5px;
+  margin:20px 0; max-width:440px;
+}
+.sieve div{
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  font-size:13px; border-radius:3px; border:1px solid transparent;
+}
+.sieve .removed{ background:transparent; border-color:var(--rule); color:var(--removed); }
+.sieve .kept{ background:var(--kept-bg); border-color:var(--kept-border); color:var(--accent-ink); font-weight:600; }
+.legend{ display:flex; gap:22px; font-size:13px; color:var(--ink-soft); margin-top:12px; flex-wrap:wrap; }
+.legend span{ display:inline-flex; align-items:center; gap:7px; }
+.swatch{ width:13px; height:13px; border-radius:2px; display:inline-block; }
+.swatch.kept{ background:var(--kept-bg); border:1px solid var(--kept-border); }
+.swatch.removed{ background:transparent; border:1px solid var(--rule); }
+
+/* ---------- tables ---------- */
+.tblwrap{ overflow-x:auto; margin:18px 0; }
+table.data{ border-collapse:collapse; width:100%; font-size:14px; }
+table.data th, table.data td{
+  padding:7px 12px; text-align:right; border-bottom:1px solid var(--rule);
+  font-variant-numeric:tabular-nums;
+}
+table.data th:first-child, table.data td:first-child{ text-align:left; }
+table.data th{ color:var(--ink-faint); font-weight:500; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+table.data tr:last-child td{ border-bottom:none; }
+table.data td.hi{ color:var(--accent-ink); font-weight:600; }
+
+/* ---------- matrices: fixed dark instrument-panel look, both themes ---------- */
+.matrices{ display:flex; gap:28px; flex-wrap:wrap; margin:22px 0; }
+.matrix-card{
+  background:#0c1420; border:1px solid #24344a; border-radius:6px;
+  padding:16px 18px; flex:1 1 320px; overflow-x:auto;
+}
+.matrix-card .mlabel{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; color:#e0a34c; margin-bottom:12px;
+}
+table.matrix{ border-collapse:collapse; font-family:"IBM Plex Mono",monospace; font-size:13px; color:#dbe6f2; }
+table.matrix th, table.matrix td{
+  padding:4px 8px; text-align:center; font-variant-numeric:tabular-nums;
+}
+table.matrix th{ color:#7d95b3; font-weight:400; }
+table.matrix td.diag{ color:#e0a34c; font-weight:600; }
+table.matrix td.zero{ color:#3a4a60; }
+table.matrix td.neg{ color:#7ea8d8; }
+
+/* ---------- math ---------- */
+.eq{ overflow-x:auto; padding:6px 0; }
+mjx-container{ color:var(--ink) !important; }
+
+footer{ margin-top:20px; padding-top:24px; border-top:1px solid var(--rule); color:var(--ink-faint); font-size:13px; }
+a{ color:var(--accent-ink); }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">&lt;course-id&gt; — &lt;course-name&gt; · Weeks 3–4</div>
+    <h1>Counting What's Left</h1>
+    <p>Euler's totient function and the Möbius function, rebuilt from a single Venn diagram up through matrix inversion on a poset. Every identity below is worked through on one running example — <strong>n = 30</strong> — by hand, before the general formula is stated.</p>
+  </header>
+
+  <div class="layout">
+    <nav class="toc">
+      <ol>
+        <li><a href="#s0"><span class="n">0</span>Why count this?</a></li>
+        <li><a href="#s1"><span class="n">1</span>Inclusion–exclusion</a></li>
+        <li><a href="#s2"><span class="n">2</span>The totient, sieved</a></li>
+        <li><a href="#s3"><span class="n">3</span>The product formula</a></li>
+        <li><a href="#s4"><span class="n">4</span>Naming the sign: μ</a></li>
+        <li><a href="#s5"><span class="n">5</span>Why Σμ(d) = 0</a></li>
+        <li><a href="#s6"><span class="n">6</span>Gauss's identity</a></li>
+        <li><a href="#s7"><span class="n">7</span>Posets</a></li>
+        <li><a href="#s8"><span class="n">8</span>ζ as a matrix</a></li>
+        <li><a href="#s9"><span class="n">9</span>μ as ζ⁻¹</a></li>
+        <li><a href="#s10"><span class="n">10</span>Möbius inversion</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <section id="s0">
+        <h2><span class="n">0</span>Why count this at all?</h2>
+        <p>A fraction $a/b$ is already in lowest terms exactly when $a$ and $b$ share no common factor — when $\gcd(a,b)=1$. So $\varphi(n)$, the count of integers from $1$ to $n$ that share no factor with $n$, is also the count of distinct fractions with denominator $n$ that can't be simplified any further.</p>
+        <p class="soft">It shows up again in modular arithmetic: the integers coprime to $n$ are exactly the ones with a multiplicative inverse mod $n$ — the reason $\varphi$ sits at the center of RSA encryption. None of that is needed to follow what's below; it's just why anyone bothered naming this count in the first place.</p>
+      </section>
+
+      <section id="s1">
+        <h2><span class="n">1</span>Inclusion–exclusion, from a Venn diagram up</h2>
+        <p>Start with the plainest version of the problem. <strong>How many integers from 1 to 30 are divisible by 2 or by 3?</strong></p>
+        <p>Multiples of 2: there are 15. Multiples of 3: there are 10. Adding — $15+10=25$ — is wrong, and a single check shows why: $6$ is a multiple of 2 <em>and</em> a multiple of 3, so it just got counted in both piles. Every multiple of 6 did.</p>
+
+        <figure>
+          <svg viewBox="0 0 320 190" role="img" aria-label="Two overlapping circles, labelled multiples of 2 and multiples of 3, with their intersection multiples of 6">
+            <circle cx="130" cy="95" r="80" fill="var(--accent-soft)" fill-opacity="0.55" stroke="var(--accent)" stroke-width="1.5"/>
+            <circle cx="210" cy="95" r="80" fill="var(--panel)" fill-opacity="0.7" stroke="var(--ink-soft)" stroke-width="1.5"/>
+            <text x="90" y="60" font-size="13" fill="var(--ink)" font-family="IBM Plex Sans">mult. of 2</text>
+            <text x="228" y="60" font-size="13" fill="var(--ink)" font-family="IBM Plex Sans" text-anchor="end">mult. of 3</text>
+            <text x="170" y="99" font-size="12" fill="var(--ink-soft)" font-family="IBM Plex Mono" text-anchor="middle">mult. of 6</text>
+            <text x="100" y="120" font-size="20" fill="var(--accent-ink)" font-family="IBM Plex Mono" text-anchor="middle" font-weight="600">15</text>
+            <text x="240" y="120" font-size="20" fill="var(--ink-soft)" font-family="IBM Plex Mono" text-anchor="middle" font-weight="600">10</text>
+            <text x="170" y="122" font-size="15" fill="var(--ink)" font-family="IBM Plex Mono" text-anchor="middle">5</text>
+          </svg>
+          <figcaption>The overlap (multiples of 6) sits inside <em>both</em> circles' counts. The numbers shown are set sizes, not element counts drawn to scale.</figcaption>
+        </figure>
+
+        <p>To count the union without double-counting, subtract the overlap back out once:</p>
+        <div class="eq">$$|A\cup B| = |A|+|B|-|A\cap B| = 15+10-5=20$$</div>
+
+        <p>Now push it to three sets — the case that actually matters below. <strong>How many integers from 1 to 30 are divisible by 2, 3, or 5?</strong> Three circles now overlap pairwise <em>and</em> all three overlap in the middle (multiples of 30). Subtracting each pairwise overlap removes the triple-overlap region three times over — once as part of each pair — so it has to be added back once to land on zero net removals for it:</p>
+        <div class="eq">$$|A\cup B\cup C| = |A|+|B|+|C| \;-\; |A\cap B|-|A\cap C|-|B\cap C| \;+\; |A\cap B\cap C|$$</div>
+
+        <div class="check"><span class="mark">check</span><span>30 is a multiple of 2, 3, and 5. It gets added 3 times (once per single set), subtracted 3 times (once per pair), added back once (the triple term): $3-3+1=1$. Counted exactly once — correct.</span></div>
+
+        <p class="soft">This is the pattern for any number of sets: alternate adding and subtracting as overlaps get deeper, because each element needs to end up counted exactly once. That alternating sign is the single idea everything below is built from.</p>
+      </section>
+
+      <section id="s2">
+        <h2><span class="n">2</span>The totient, sieved by hand</h2>
+        <p>$\varphi(n)$ counts numbers in $[1,n]$ that <em>don't</em> share a prime factor with $n$. Equivalently: start with all $n$ numbers, and remove the ones that <em>do</em> share a factor — divisible by at least one of $n$'s prime factors.</p>
+        <p>Take $n=30=2\cdot3\cdot5$. The three prime factors are exactly the three circles from Part 1. Using the sizes already computed there:</p>
+        <div class="tblwrap">
+          <table class="data">
+            <tr><th>set</th><th>meaning</th><th>size</th></tr>
+            <tr><td>$A_2$</td><td>multiples of 2 in [1,30]</td><td>15</td></tr>
+            <tr><td>$A_3$</td><td>multiples of 3</td><td>10</td></tr>
+            <tr><td>$A_5$</td><td>multiples of 5</td><td>6</td></tr>
+            <tr><td>$A_2\cap A_3$</td><td>multiples of 6</td><td>5</td></tr>
+            <tr><td>$A_2\cap A_5$</td><td>multiples of 10</td><td>3</td></tr>
+            <tr><td>$A_3\cap A_5$</td><td>multiples of 15</td><td>2</td></tr>
+            <tr><td>$A_2\cap A_3\cap A_5$</td><td>multiples of 30</td><td>1</td></tr>
+          </table>
+        </div>
+        <div class="eq">$$|A_2\cup A_3\cup A_5| = 15+10+6-5-3-2+1 = 22$$</div>
+        <div class="eq">$$\varphi(30) = 30 - 22 = 8$$</div>
+        <p>Sieve the actual numbers to confirm it — remove anything divisible by 2, 3, or 5:</p>
+        <div class="sieve" id="sieve30"></div>
+        <div class="legend">
+          <span><i class="swatch kept"></i>coprime to 30 — kept</span>
+          <span><i class="swatch removed"></i>shares a factor — removed</span>
+        </div>
+        <p class="soft">Survivors: 1, 7, 11, 13, 17, 19, 23, 29 — eight numbers, matching the count above exactly.</p>
+      </section>
+
+      <section id="s3">
+        <h2><span class="n">3</span>The product formula — why it's the same sum</h2>
+        <p>Euler's usual formula for the totient is a product, not a sum:</p>
+        <div class="eq">$$\varphi(n) = n\prod_{p\mid n}\left(1-\frac1p\right)$$</div>
+        <p>For $n=30$: $\varphi(30) = 30\left(1-\tfrac12\right)\left(1-\tfrac13\right)\left(1-\tfrac15\right) = 30\cdot\tfrac12\cdot\tfrac23\cdot\tfrac45 = 8$. Same answer — and multiplying the product out term by term shows it's not a coincidence, it's <em>literally</em> the inclusion–exclusion sum from Part 2 in disguise. Each factor contributes either its "$1$" or its "$-1/p$":</p>
+        <div class="tblwrap">
+          <table class="data">
+            <tr><th>choice made</th><th>term produced</th><th>matches</th></tr>
+            <tr><td>1 · 1 · 1</td><td class="hi">$+30$</td><td>the bare "$n$"</td></tr>
+            <tr><td>$(-\tfrac12)$·1·1</td><td class="hi">$-15$</td><td>$-|A_2|$</td></tr>
+            <tr><td>1·$(-\tfrac13)$·1</td><td class="hi">$-10$</td><td>$-|A_3|$</td></tr>
+            <tr><td>1·1·$(-\tfrac15)$</td><td class="hi">$-6$</td><td>$-|A_5|$</td></tr>
+            <tr><td>$(-\tfrac12)(-\tfrac13)$·1</td><td class="hi">$+5$</td><td>$+|A_2\cap A_3|$</td></tr>
+            <tr><td>$(-\tfrac12)$·1·$(-\tfrac15)$</td><td class="hi">$+3$</td><td>$+|A_2\cap A_5|$</td></tr>
+            <tr><td>1·$(-\tfrac13)(-\tfrac15)$</td><td class="hi">$+2$</td><td>$+|A_3\cap A_5|$</td></tr>
+            <tr><td>$(-\tfrac12)(-\tfrac13)(-\tfrac15)$</td><td class="hi">$-1$</td><td>$-|A_2\cap A_3\cap A_5|$</td></tr>
+          </table>
+        </div>
+        <p class="soft">Every one of the 8 terms from expanding the product lines up with one of the 7 inclusion–exclusion pieces plus the bare $n$ — same numbers, same signs. Choosing "$1$" from a factor means that prime is left out; choosing "$-1/p$" means it's included in the overlap being subtracted or added back. That's what a subset of primes <em>is</em>, algebraically.</p>
+      </section>
+
+      <section id="s4">
+        <h2><span class="n">4</span>Naming the sign: the Möbius function</h2>
+        <p>Look at what just happened generally, not just for $n=30$: every term in the inclusion–exclusion sum is $\pm\,n/d$, where $d$ is the product of some subset of $n$'s distinct primes, and the sign is $(-1)^{\text{(size of that subset)}}$.</p>
+        <p><em class="term">μ(d)</em> is defined to be exactly that sign, as a function of $d$ alone — so the subset never has to be mentioned again:</p>
+        <div class="eq">$$\mu(d) = \begin{cases} 1 & d=1 \\ (-1)^k & d = p_1p_2\cdots p_k,\ \text{ distinct primes} \\ 0 & \text{otherwise (a prime repeats in }d\text{)} \end{cases}$$</div>
+        <p>Because $30=2\cdot3\cdot5$ is squarefree, <em>every</em> divisor of 30 is built from some subset of $\{2,3,5\}$ — none of them get the $0$ case:</p>
+        <div class="tblwrap">
+          <table class="data">
+            <tr><th>$d$</th><td>1</td><td>2</td><td>3</td><td>5</td><td>6</td><td>10</td><td>15</td><td>30</td></tr>
+            <tr><th>subset of primes</th><td>∅</td><td>{2}</td><td>{3}</td><td>{5}</td><td>{2,3}</td><td>{2,5}</td><td>{3,5}</td><td>{2,3,5}</td></tr>
+            <tr><th>μ(d)</th><td class="hi">1</td><td class="hi">−1</td><td class="hi">−1</td><td class="hi">−1</td><td class="hi">1</td><td class="hi">1</td><td class="hi">1</td><td class="hi">−1</td></tr>
+          </table>
+        </div>
+        <p class="soft">The "otherwise" case matters for a number like $12=2^2\cdot3$: its divisor $4=2^2$ can never be written as a product of <em>distinct</em> primes — no subset of $\{2,3\}$ multiplies to 4 — so $\mu(4)=0$. Zero, not undefined: this is what lets the next formula sum over <em>every</em> divisor safely, without having to first filter out the ones that shouldn't count.</p>
+        <p>With $\mu$ defined, the totient formula becomes a sum over all divisors:</p>
+        <div class="eq">$$\varphi(n) = \sum_{d\mid n}\mu(d)\,\frac nd$$</div>
+        <div class="eq">$$\varphi(30) = 1\cdot30 - 1\cdot15 - 1\cdot10 - 1\cdot6 + 1\cdot5 + 1\cdot3 + 1\cdot2 - 1\cdot1 = 8 \checkmark$$</div>
+      </section>
+
+      <section id="s5">
+        <h2><span class="n">5</span>Why Σ μ(d) = 0 — a hidden Pascal's-triangle row</h2>
+        <p>A companion fact: for any $n\ge2$, summing $\mu(d)$ over <em>all</em> its divisors gives exactly $0$. For $n=30$: $1-1-1-1+1+1+1-1=0$.</p>
+        <p>This isn't a fluke — it's the same fact as "a nonempty set has equally many even-sized and odd-sized subsets," restated. Group $30$'s divisors by how many primes built them:</p>
+        <div class="tblwrap">
+          <table class="data">
+            <tr><th>subset size</th><th>divisors</th><th>count</th><th>sign</th></tr>
+            <tr><td>0</td><td>1</td><td>1</td><td class="hi">+</td></tr>
+            <tr><td>1</td><td>2, 3, 5</td><td>3</td><td class="hi">−</td></tr>
+            <tr><td>2</td><td>6, 10, 15</td><td>3</td><td class="hi">+</td></tr>
+            <tr><td>3</td><td>30</td><td>1</td><td class="hi">−</td></tr>
+          </table>
+        </div>
+        <p>The counts $1,3,3,1$ are the row of Pascal's triangle for choosing subsets of a 3-element set — $\binom30,\binom31,\binom32,\binom33$. The binomial theorem says exactly this alternating sum vanishes:</p>
+        <div class="eq">$$(1-1)^3 = \sum_{k=0}^{3}\binom3k(-1)^k(1)^{3-k} = \binom30-\binom31+\binom32-\binom33 = 1-3+3-1=0$$</div>
+        <p class="soft">Same reasoning for any $n$ with $m$ distinct prime factors: $(1-1)^m=0$. That's why the identity requires $n\ge2$ — an empty product of primes ($n=1$, $m=0$) gives $(1-1)^0=1$, not $0$, so the pattern only kicks in once there's at least one prime to pair up.</p>
+      </section>
+
+      <section id="s6">
+        <h2><span class="n">6</span>Gauss's identity: a partition, not a formula</h2>
+        <p>The companion identity to Part 4, due to Gauss: $n=\sum_{d\mid n}\varphi(d)$. This isn't algebra on the totient formula — it's counting the same 30 numbers a second way, by sorting each one by $\gcd(k,30)$.</p>
+        <p>Every $k$ in $[1,30]$ has <em>some</em> $\gcd$ with 30, and that gcd is always a divisor $e$ of 30. Write $k=e\cdot j$; then $\gcd(k,30)=e$ exactly when $j$ is coprime to $30/e$ — so there are $\varphi(30/e)$ numbers with that gcd. Sort all 30 numbers into bins by their gcd with 30:</p>
+        <div class="tblwrap">
+          <table class="data">
+            <tr><th>gcd(k,30) = e</th><th>the k's</th><th>count</th><th>= φ(30/e)</th></tr>
+            <tr><td>30</td><td>30</td><td>1</td><td>φ(1)=1</td></tr>
+            <tr><td>15</td><td>15</td><td>1</td><td>φ(2)=1</td></tr>
+            <tr><td>10</td><td>10, 20</td><td>2</td><td>φ(3)=2</td></tr>
+            <tr><td>6</td><td>6, 12, 18, 24</td><td>4</td><td>φ(5)=4</td></tr>
+            <tr><td>5</td><td>5, 25</td><td>2</td><td>φ(6)=2</td></tr>
+            <tr><td>3</td><td>3, 9, 21, 27</td><td>4</td><td>φ(10)=4</td></tr>
+            <tr><td>2</td><td>2, 4, 8, 14, 16, 22, 26, 28</td><td>8</td><td>φ(15)=8</td></tr>
+            <tr><td>1</td><td>1, 7, 11, 13, 17, 19, 23, 29</td><td>8</td><td>φ(30)=8</td></tr>
+          </table>
+        </div>
+        <p>Every one of the 30 numbers appears in exactly one bin (its gcd with 30 is unique), so the bin sizes must add to 30 — and each bin size is a totient value: $1+1+2+4+2+4+8+8=30$. That's $n=\sum_{d\mid n}\varphi(d)$, with no formula manipulation at all — just a complete, non-overlapping partition of $\{1,\dots,30\}$.</p>
+      </section>
+
+      <section id="s7">
+        <h2><span class="n">7</span>Posets: relaxing "≤"</h2>
+        <p>A <em class="term">poset</em> is a set with a relation "$\le$" satisfying three rules — and the point of the definition is exactly what happens if one is dropped.</p>
+        <div class="panel"><span class="label">reflexivity: a ≤ a</span><p>Drop it, and strict "$\lt$" on numbers is the result: $x\lt x$ is false for every $x$. That's why strict $\lt$ alone is <em>not</em> a poset — this is a real failure the course's own practice question exhibits.</p></div>
+        <div class="panel"><span class="label">antisymmetry: a≤b and b≤a ⟹ a=b</span><p>This is what stops two genuinely different elements from tying. Without it, "$\le$" could relate two distinct things both ways at once and never pin down which one is "smaller."</p></div>
+        <div class="panel"><span class="label">transitivity: a≤b and b≤c ⟹ a≤c</span><p>Drop this and you get rock–paper–scissors: rock beats scissors, scissors beats paper — but rock does <em>not</em> beat paper. "Beats" is inherently cyclic, so it can never be a poset order no matter how it's dressed up.</p></div>
+        <p>What's <em>not</em> required is <strong>totality</strong>: that every pair be comparable. Ordinary $\le$ on numbers has it (it's a straight chain). Divisibility does not — 2 and 3 don't divide each other. Subset inclusion does not — $\{1,2\}$ and $\{1,3\}$ don't contain each other. That's the "partial" in partially ordered: some pairs are simply incomparable, and that's allowed.</p>
+        <p>The divisors of 30, ordered by divisibility, form a poset shaped exactly like the cube of subsets of $\{2,3,5\}$ from Part 5 — each divisor <em>is</em> a subset, read as a product:</p>
+        <figure>
+          <svg viewBox="0 0 300 280" role="img" aria-label="Hasse diagram of the divisors of 30 under divisibility, shaped like a cube">
+            <g stroke="var(--ink-faint)" stroke-width="1.3">
+              <line x1="150" y1="260" x2="60" y2="180"/>
+              <line x1="150" y1="260" x2="150" y2="180"/>
+              <line x1="150" y1="260" x2="240" y2="180"/>
+              <line x1="60" y1="180" x2="105" y2="100"/>
+              <line x1="60" y1="180" x2="150" y2="100"/>
+              <line x1="150" y1="180" x2="105" y2="100"/>
+              <line x1="150" y1="180" x2="195" y2="100"/>
+              <line x1="240" y1="180" x2="150" y2="100"/>
+              <line x1="240" y1="180" x2="195" y2="100"/>
+              <line x1="105" y1="100" x2="150" y2="20"/>
+              <line x1="150" y1="100" x2="150" y2="20"/>
+              <line x1="195" y1="100" x2="150" y2="20"/>
+            </g>
+            <g font-family="IBM Plex Mono" font-size="14" text-anchor="middle">
+              <circle cx="150" cy="260" r="15" fill="var(--panel)" stroke="var(--ink-soft)"/>
+              <text x="150" y="265" fill="var(--ink)">1</text>
+              <circle cx="60" cy="180" r="15" fill="var(--panel)" stroke="var(--ink-soft)"/>
+              <text x="60" y="185" fill="var(--ink)">2</text>
+              <circle cx="150" cy="180" r="15" fill="var(--panel)" stroke="var(--ink-soft)"/>
+              <text x="150" y="185" fill="var(--ink)">3</text>
+              <circle cx="240" cy="180" r="15" fill="var(--panel)" stroke="var(--ink-soft)"/>
+              <text x="240" y="185" fill="var(--ink)">5</text>
+              <circle cx="105" cy="100" r="15" fill="var(--accent-soft)" stroke="var(--accent)"/>
+              <text x="105" y="105" fill="var(--accent-ink)">6</text>
+              <circle cx="150" cy="100" r="15" fill="var(--accent-soft)" stroke="var(--accent)"/>
+              <text x="150" y="105" fill="var(--accent-ink)">10</text>
+              <circle cx="195" cy="100" r="15" fill="var(--accent-soft)" stroke="var(--accent)"/>
+              <text x="195" y="105" fill="var(--accent-ink)">15</text>
+              <circle cx="150" cy="20" r="15" fill="var(--panel)" stroke="var(--ink-soft)"/>
+              <text x="150" y="25" fill="var(--ink)">30</text>
+            </g>
+          </svg>
+          <figcaption>Only "covering" edges are drawn (e.g. 2→6, since nothing sits strictly between them); every other true relation, like 1≤30, follows by transitivity along the edges.</figcaption>
+        </figure>
+      </section>
+
+      <section id="s8">
+        <h2><span class="n">8</span>ζ: turning "≤" into a number</h2>
+        <p>A relation can't be summed or multiplied — a number can. $\zeta(a,b)$ just converts "$a\le b$?" into $1$ or $0$:</p>
+        <div class="eq">$$\zeta(a,b) = \begin{cases}1 & a\le b\\ 0 & \text{otherwise}\end{cases}$$</div>
+        <p>List the 8 divisors of 30 in an order consistent with divisibility — $1,2,3,5,6,10,15,30$ — and $\zeta$ becomes an actual $8\times8$ matrix of 0s and 1s. It's upper triangular: since the list respects divisibility, $a\mid b$ never puts $b$ before $a$.</p>
+        <div class="matrices">
+          <div class="matrix-card">
+            <div class="mlabel">ζ — is row ≤ column?</div>
+            <div id="zetaMatrix"></div>
+          </div>
+        </div>
+        <p class="soft">Row "1" is all 1s — 1 divides everything. Row "30" is a single 1 on the diagonal — 30 divides nothing bigger in this set. Every other row sits between those two extremes.</p>
+      </section>
+
+      <section id="s9">
+        <h2><span class="n">9</span>μ as ζ⁻¹ — undoing the sum</h2>
+        <p>Here's the question that motivates the poset Möbius function: $\zeta$'s rows encode "everything $\le b$" — summing a function against a row of $\zeta$ produces a running total. Is there a matrix that <em>undoes</em> that, and hands back the original values?</p>
+        <p>Because $\zeta$ is upper triangular with 1s on its diagonal, the answer is yes, and no fractions are even needed — it inverts by working from the diagonal outward, the same way you'd back-substitute a triangular system of equations. Define $\mu$ to be that inverse: $\mu\zeta=\zeta\mu=I$, i.e.</p>
+        <div class="eq">$$\sum_{c}\mu(a,c)\,\zeta(c,b) = \mathbf 1_{a=b}$$</div>
+        <p>Since $\zeta(c,b)=1$ whenever $a\le c\le b$ and $0$ otherwise, that sum collapses to $\sum_{a\le c\le b}\mu(a,c)$. Pull the $c=b$ term out on its own:</p>
+        <div class="eq">$$\mu(a,b) + \sum_{a\le c\lt b}\mu(a,c) = \mathbf 1_{a=b}$$</div>
+        <p>For $a\lt b$ the right side is $0$, so solving for $\mu(a,b)$ gives exactly the recursive definition from the lecture — it isn't a separate rule, it's this one matrix equation rearranged:</p>
+        <div class="eq">$$\mu(a,b) = \begin{cases}1 & a=b\\ -\displaystyle\sum_{a\le c\lt b}\mu(a,c) & a\lt b\\ 0 & \text{otherwise}\end{cases}$$</div>
+        <p>Computed out for all 8 divisors of 30, side by side with $\zeta$:</p>
+        <div class="matrices">
+          <div class="matrix-card">
+            <div class="mlabel">ζ</div>
+            <div id="zetaMatrix2"></div>
+          </div>
+          <div class="matrix-card">
+            <div class="mlabel">μ = ζ⁻¹</div>
+            <div id="muMatrix"></div>
+          </div>
+        </div>
+        <p class="soft">Row "1" of the μ matrix — $1,-1,-1,-1,1,1,1,-1$ — is exactly the classical $\mu(d)$ table from Part 4. That's not a coincidence: restricting the poset's $\mu(1,n)$ to the first row always reproduces the classical number-theoretic $\mu(n)$. And because 30 is squarefree, every other row is just that same row shifted: $\mu(a,b)=\mu(b/a)$ whenever $a\mid b$, since the stretch of divisors between $a$ and $b$ is itself shaped like the divisor poset of $b/a$.</p>
+      </section>
+
+      <section id="s10">
+        <h2><span class="n">10</span>Möbius inversion — the payoff</h2>
+        <p>Since $\mu=\zeta^{-1}$, "running total" and "recover the original" are just the same matrix equation read in two directions:</p>
+        <div class="eq">$$f(b) = \sum_{a\le b} g(a)\ \ \forall b \quad\Longleftrightarrow\quad g(b) = \sum_{a\le b}\mu(a,b)f(a)\ \ \forall b$$</div>
+        <p><strong>Simplest possible poset — a plain chain, $1,2,3,4,5$ under ordinary $\le$.</strong> Here $\zeta$ is the "everything-so-far" matrix (a triangle of 1s); its inverse $\mu$ has $1$ on the diagonal, $-1$ on the diagonal just above it, and $0$ everywhere else — meaning the inversion formula collapses to <em>first differences</em>: $g(b)=f(b)-f(b-1)$.</p>
+        <div class="tblwrap">
+          <table class="data">
+            <tr><th>b</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+            <tr><th>g(b)</th><td>3</td><td>1</td><td>4</td><td>1</td><td>5</td></tr>
+            <tr><th>f(b) = running total</th><td>3</td><td>4</td><td>8</td><td>9</td><td>14</td></tr>
+            <tr><th>f(b) − f(b−1)</th><td>3</td><td>1</td><td>4</td><td>1</td><td>5</td></tr>
+          </table>
+        </div>
+        <p>The last row exactly reconstructs $g$ from $f$ alone. That confirms the theorem on the easiest case there is — before trusting it on the divisor poset, where it's doing something much less obvious.</p>
+        <p><strong>Now the same theorem, on the divisor-of-30 poset, with $f(d)=d$ and $g=\varphi$:</strong></p>
+        <ul>
+          <li>the "$f=\sum g$" direction is <strong>Gauss's identity</strong>, $n=\sum_{d\mid n}\varphi(d)$ — proved by hand in Part 6</li>
+          <li>the "$g=\sum \mu f$" direction is <strong>the totient formula</strong>, $\varphi(n)=\sum_{d\mid n}\mu(n/d)\,d$ — proved by hand in Parts 2–4</li>
+        </ul>
+        <p>Two identities that looked like separate facts about number theory turn out to be one theorem, viewed from its two directions — and the same theorem, on the plain chain above, is just "a sum undoes a difference." Everything in Parts 1–6 was the $n=30$ special case of Parts 7–10 all along.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>Source: &lt;course-id&gt; &lt;course-name&gt;, Weeks 3–4 lecture material (Euler's totient function; the classical and poset Möbius functions; Möbius inversion). Worked examples and derivations above are independent elaborations checked against the lecture's own identities.</footer>
+</div>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$']],
+    displayMath: [['$$','$$']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+
+<script>
+(function(){
+  // sieve grid: divisors of 30 sieved 1..30
+  var sieve = document.getElementById('sieve30');
+  var kept = new Set([1,7,11,13,17,19,23,29]);
+  for (var i=1;i<=30;i++){
+    var d = document.createElement('div');
+    d.className = kept.has(i) ? 'kept' : 'removed';
+    d.textContent = i;
+    sieve.appendChild(d);
+  }
+
+  // divisor-of-30 poset matrices
+  var order = [1,2,3,5,6,10,15,30];
+
+  function classicalMu(n){
+    if (n===1) return 1;
+    var primes=[2,3,5], count=0, m=n;
+    for (var i=0;i<primes.length;i++){
+      var p=primes[i], c=0;
+      while(m%p===0){ m/=p; c++; }
+      if (c>1) return 0;
+      if (c===1) count++;
+    }
+    if (m!==1) return 0; // shouldn't happen for divisors of 30
+    return count%2===0 ? 1 : -1;
+  }
+
+  function renderMatrix(el, order, fn, opts){
+    var t = document.createElement('table');
+    t.className='matrix';
+    var head = document.createElement('tr');
+    head.appendChild(document.createElement('th'));
+    order.forEach(function(b){ var th=document.createElement('th'); th.textContent=b; head.appendChild(th); });
+    t.appendChild(head);
+    order.forEach(function(a){
+      var row=document.createElement('tr');
+      var rh=document.createElement('th'); rh.textContent=a; row.appendChild(rh);
+      order.forEach(function(b){
+        var td=document.createElement('td');
+        var v = fn(a,b);
+        td.textContent = v;
+        if (a===b) td.className='diag';
+        else if (v===0) td.className='zero';
+        else if (v<0) td.className='neg';
+        row.appendChild(td);
+      });
+      t.appendChild(row);
+    });
+    el.appendChild(t);
+  }
+
+  function zetaFn(a,b){ return (b % a === 0) ? 1 : 0; }
+  function muFn(a,b){ return (b % a === 0) ? classicalMu(b/a) : 0; }
+
+  renderMatrix(document.getElementById('zetaMatrix'), order, zetaFn);
+  renderMatrix(document.getElementById('zetaMatrix2'), order, zetaFn);
+  renderMatrix(document.getElementById('muMatrix'), order, muFn);
+})();
+</script>
