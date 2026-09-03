@@ -27,7 +27,7 @@ enumeration doesn't directly apply. Proposed approach, flagged as unproven:
 - **Small-n spot-check**: where the proof claims a property for general `n`, verify it holds
   by direct computation/enumeration for a few small concrete values of `n`.
 
-This lane is expected to matter starting with posets (weeks 2+ of MAST30012, per
-`handoff.md`). Treat it as provisional until it's been run against a real proof-based
+This lane is expected to matter starting with posets (weeks 2+ of a discrete-math-style
+course). Treat it as provisional until it's been run against a real proof-based
 question and shown to catch a real error the way Lane 1 did — don't present it with the same
 confidence as Lane 1 until then.

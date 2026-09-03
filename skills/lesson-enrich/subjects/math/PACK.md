@@ -1,8 +1,8 @@
 # Math subject pack
 
 Subject-specific rules and tooling for `lesson-enrich` when the course is a math subject
-(proven out on MAST30012 Discrete Mathematics; should generalize to other proof/formula-heavy
-math courses).
+(proven out on a real discrete-mathematics course; should generalize to other
+proof/formula-heavy math courses).
 
 ## Rules specific to math
 
@@ -75,6 +75,6 @@ the KaTeX CSS is spliced in — never leave a relative file path in the publishe
 ## Reference
 
 - `reference/diagram-conventions.md` — expanded guidance on when a diagram earns its place
-- `../../reference/quality-bar-sample.html` — the finished example built from real MAST30012
-  Week 1 content; the KaTeX wiring and the diagram in that file are the literal pattern to
+- `../../reference/quality-bar-sample.html` — the finished example built from real Week 1
+  course content; the KaTeX wiring and the diagram in that file are the literal pattern to
   copy, not just an illustration

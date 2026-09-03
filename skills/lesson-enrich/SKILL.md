@@ -25,6 +25,9 @@ content. Only `subjects/math/PACK.md` is built; `subjects/economics/` and
 - `reference/onboarding-survey.md` — the first-launch-per-course calibration questions
 - `reference/quality-bar-sample.html` — the finished, approved reference artifact (open it in a
   browser to see the actual bar, not just read about it)
+- `../transcript-slide-extract/SKILL.md` — the required sub-skill for cross-checking a dropped
+  transcript against the slides (see step 3 below); only relevant when a transcript file is
+  present for the lecture being enriched
 
 ## Workflow
 
@@ -41,14 +44,27 @@ content. Only `subjects/math/PACK.md` is built; `subjects/economics/` and
    file per lecture — see `practice-weave/SKILL.md` step 1 for why this matters). Pull the
    lecture's transcript/notes, slides (if present), and matching problem set for this lecture,
    per the course's manifest/naming convention (inferred per-course, not fixed — see
-   `design-enrichment.md` at the project root for the resolved decision on this).
+   `design-enrichment.md` at the project root for the resolved decision on this). Extract the
+   slide section structure (section titles/headers, in order) as part of this step — it's
+   needed for drafting either way, and it's also what step 3a hands to `transcript-slide-extract`
+   below rather than that skill re-reading the slides itself.
+   - **3a. Transcript cross-check (only if a transcript file is present for this lecture).**
+     **REQUIRED SUB-SKILL:** Use `transcript-slide-extract`, passing it the slide section
+     structure just extracted and the transcript file's path. It returns a manifest at
+     `<course-folder>/manifests/<lecture-id>-transcript-gaps.md`. If no transcript file exists
+     for this lecture, skip this sub-step entirely and proceed exactly as before — a missing
+     transcript is never an error.
 4. **Draft content section by section**, following the source's own structure. For each
    section: reproduce the original content in full, then add an intuition/derivation block
-   per `reference/tone-guide.md`. Do not condense or skip a section because it seems
-   "obvious" or "already clear" — the one narrow exception is when the enrichment layer has
-   nothing to add and says so explicitly (see the quality-bar sample, Section 4/"unchanged from
-   source" pattern) — that is a judgment call about the *enrichment*, never license to shorten
-   the *original* content.
+   per `reference/tone-guide.md`. If a `<lecture-id>-transcript-gaps.md` manifest exists for
+   this lecture (step 3a), check it for this section: weave an inline fold (`.from-transcript`
+   span inside the existing source box) or a standalone add-on box (`.transcript-box`) exactly
+   where the manifest indicates, re-reading the raw transcript at the manifest's line/timestamp
+   range for exact wording — the manifest never carries the wording itself. Do not condense or
+   skip a section because it seems "obvious" or "already clear" — the one narrow exception is
+   when the enrichment layer has nothing to add and says so explicitly (see the quality-bar
+   sample, Section 4/"unchanged from source" pattern) — that is a judgment call about the
+   *enrichment*, never license to shorten the *original* content.
 5. **Diagrams and subject-specific tooling** — follow `subjects/<subject>/PACK.md` exactly
    for what tool to call and when a diagram earns its place (default bar: skip trivial
    concepts; prefer regenerating a diagram already in the source over inventing a new one).
@@ -84,3 +100,5 @@ content. Only `subjects/math/PACK.md` is built; `subjects/economics/` and
 | Applying a user's stated preference to something in `reference/invariants.md` | Invariants never change per user or course. Only presentation/depth calibration (see the onboarding survey) does. |
 | Writing a strict inequality in a formula as raw `a<b`/`P(X>t)` | Escape it: `a \lt b` / `\gt`, or `a &lt; b` / `&gt;`. Raw `<`/`>` in page HTML (not inside `<script>`/`<style>`) is parsed as a tag by the browser before KaTeX runs, silently eating content up to the next stray `>`. `reference/scripts/check_math_html_safety.py` catches this — run it before publishing. |
 | Trusting "KaTeX parses it with no error" as proof a formula will render correctly | A formula can parse fine and still render wrong — e.g. `\mathcal{F}` renders in the browser's default font, not KaTeX's, if that font isn't embedded. Parsing correctness and HTML-delivery correctness are different questions; `check_math_html_safety.py` checks both, a syntax check alone checks neither of the two bugs actually seen in production. |
+| Treating a transcript-sourced example/aside as if it were plain source or plain added-enrichment content | It's neither — use `.transcript-box` (add-on unit) or the `.from-transcript` inline marker (short aside), never the plain `.source-box`/`.add-box` styles, so the reader can tell "the lecturer said this" from both "the slides said this" and "the tool added this." |
+| Running `transcript-slide-extract` even when no transcript file was dropped | Step 3a is conditional — skip it entirely and draft exactly as before when there's no transcript for this lecture. |

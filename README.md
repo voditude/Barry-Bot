@@ -20,6 +20,14 @@ diagrams, and practice questions layered on top of your own course content.
 - **`i-dont-get-it`** — a companion skill for when one specific topic from an
   already-enriched lecture isn't landing. Produces a focused, first-principles,
   example-led standalone explainer for just that topic.
+- **`transcript-slide-extract`** — called by `lesson-enrich` at ingest time when
+  a lecture transcript is present. Cross-checks it against the slides and
+  surfaces spoken content (asides, clarifications, extra examples) the slides
+  don't contain, so `lesson-enrich` can fold it into the enriched document.
+- **`assignment-solver`** — takes a dropped problem set or assignment for a
+  course already ingested by `lesson-enrich`/`practice-weave` and produces a
+  full worked-solution document, using only content that course actually
+  taught, verified and cited back to the exact week/lecture.
 
 See each skill's `SKILL.md` for full details, and `skills/*/reference/` for
 design/quality-bar references. `samples/` has a hand-built worked example

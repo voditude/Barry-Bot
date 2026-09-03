@@ -1,14 +1,13 @@
 # Stochastic modelling subject pack
 
 Subject-specific rules and tooling for `lesson-enrich` when the course is a
-probability/stochastic-processes subject (proven out on MAST30001 Stochastic
-Modelling). A dedicated pack rather than an extension of `subjects/math/PACK.md`
+probability/stochastic-processes subject (proven out on a real stochastic-modelling
+course). A dedicated pack rather than an extension of `subjects/math/PACK.md`
 because this subject needs a diagram type — Markov transition/state diagrams —
 that the math pack doesn't cover, and its own notation conventions
 (recurrence/transience, periodicity, stationary distributions) that don't overlap
-with the discrete-math pack's remit. Consistent with `design-enrichment.md`'s
-per-subject-pack architecture (economics/finance are stubbed the same way math
-was before MAST30012).
+with the discrete-math pack's remit. Per-subject-pack architecture (economics/finance
+are stubbed the same way math was before this pack existed).
 
 ## Rules specific to stochastic modelling
 
