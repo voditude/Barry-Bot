@@ -47,8 +47,8 @@ and isn't being tailored.
    - Different for this course — describe how (e.g. "more formal/terse than my usual style"
      or "more analogy-driven than my usual style")
 
-   This exists because a style pick made against everyday examples (Google, the sky) may not
-   be the pick you'd make for every course — a humanities elective and a STEM major might
+   This exists because a style pick made against everyday examples (Google, time zones) may
+   not be the pick you'd make for every course — a humanities elective and a STEM major might
    reasonably want different registers even from the same person.
 
 ## Storing the result
