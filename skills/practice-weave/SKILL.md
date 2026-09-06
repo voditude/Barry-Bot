@@ -12,7 +12,7 @@ by section, what practice belongs where — a real question reused with its offi
 a new question generated to match real style and difficulty, or nothing woven at all when a
 section is pure definition or the lecture itself defers the technique to later. It's the
 sub-skill `lesson-enrich` calls out to for its "weave practice questions" step (see
-`lesson-enrich/SKILL.md` step 6) rather than something folded into it. It does not own the
+`lesson-enrich/SKILL.md` step 7) rather than something folded into it. It does not own the
 document's HTML/collapsible-answer rendering — that stays with `lesson-enrich`'s invariants.
 
 **Reference material:**

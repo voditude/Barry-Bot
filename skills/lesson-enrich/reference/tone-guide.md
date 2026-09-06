@@ -91,7 +91,25 @@ replacement for the direct/no-filler rule.
   time, not one fixed function carried across sections. This specific confusion was observed
   live in a tutoring session and is prevented by one sentence.
 
+**Write in the document's own voice, not as a narrator describing the document.** A
+slide-derived derivation or definition should read as direct explanatory prose. Never use
+"[the/this] source/notes/lecture says/states/labels/mentions" as a lead-in for content the
+reader can already see is sourced from context (the box style, the label) — reserve
+lecturer-voice attribution only for genuine transcript quotes, per `invariants.md`.
+
 ## Quick check before publishing a box
 
 Read the box and ask: if I removed every sentence that doesn't add a fact, definition, or
-derivation step, would the box get shorter? If yes, it had filler — remove it.
+derivation step, would the box get shorter? If yes, it had filler — remove it. Also ask: does
+this sentence narrate the source's *act of saying* something, rather than stating the thing
+itself? If yes, rewrite it as direct prose.
+
+## Whole-document redundancy pass
+
+After drafting every section, do one dedicated re-read pass across the **entire document**
+hunting for: (a) two boxes making the same point about the same concept in different words,
+even in different sections; (b) a self-check that restates a box's conclusion instead of
+giving a genuinely new instance; (c) the topic summary re-explaining, in full, something the
+first section is about to explain again immediately. Apply the existing "would removing this
+sentence make the box shorter without losing a fact?" question literally, sentence-by-sentence,
+not impressionistically — cut every sentence that fails it.

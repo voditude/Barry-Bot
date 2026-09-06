@@ -5,6 +5,11 @@ slide section to the matching stretch of the transcript and records what (if any
 transcript adds beyond the slides. Written to
 `<course-folder>/manifests/<lecture-id>-transcript-gaps.md`.
 
+Every inline-fold/add-on-box row also records an **Anchor**: a specific point within the
+section (e.g. "after the definition, before the first example"), not just the section name,
+so `lesson-enrich` weaves the content at a natural break in the prose instead of defaulting to
+the section's start or end.
+
 Every row is a **pointer**, never a quote: a transcript line range (or timestamp range, when
 the transcript has timestamps) and a one-line paraphrase. The manifest is an index back into
 the real transcript file, not a second copy of it — `lesson-enrich` re-reads the raw transcript
@@ -27,15 +32,15 @@ regardless of how long or verbose the transcript is.
 
 ## Inline folds
 
-| Section | Transcript ref | Paraphrase |
-|---|---|---|
-| Section 2 | lines 60-63 (~4:50-5:20) | ... |
+| Section | Transcript ref | Anchor | Paraphrase |
+|---|---|---|---|
+| Section 2 | lines 60-63 (~4:50-5:20) | after the disjointness condition, before the Week 3 forward-reference | ... |
 
 ## Add-on boxes
 
-| Section | Transcript ref | Paraphrase |
-|---|---|---|
-| Section 3 | lines 96-110 (~7:40-9:05) | ... |
+| Section | Transcript ref | Anchor | Paraphrase |
+|---|---|---|---|
+| Section 3 | lines 96-110 (~7:40-9:05) | after the worked proposition, before the practice question | ... |
 
 ## Order jumps
 

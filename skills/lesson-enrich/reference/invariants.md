@@ -8,7 +8,26 @@ invariant wins — say so explicitly rather than silently complying with the pre
 
 - **Additive, not condensed.** Every definition, proposition, proof, and worked example from
   the source lecture material is reproduced in full in its own section. The only permitted
-  condensation is the topic summary at the top of the document.
+  condensation is the topic summary at the top of the document. **Exception, disclosed:**
+  supplementary material only — illustrative examples, asides, anecdotes, empirical-data
+  lists — may be condensed when it is duplicated elsewhere in the same document or judged low
+  pedagogical value on its own terms. Definitions, propositions, theorems, and proofs are
+  never eligible, regardless of duplication or perceived value. Every condensation carries a
+  visible retention badge (percentage) and a one-line visible reason — never a silent trim.
+  **Eligibility is liberal:** the duplication and standalone-low-pedagogical-value grounds
+  above are independent — either alone is sufficient, no second condition required. ("Low
+  pedagogical value" means no connection to any technique the course teaches — not merely
+  "could be shorter.")
+- **Retention badge computation.** Compute the retention percentage as a real word-count
+  ratio (words kept ÷ words in the original passage) whenever that's a trivial comparison to
+  make at drafting time (it usually is — both texts are already in hand). Only fall back to a
+  judgment-based round number when a literal count would meaningfully slow down generation —
+  and even then, the one-line reason is still required regardless of which computation method
+  produced the percentage. Use the `.retention-badge` style (small, translucent, top-right of
+  `.source-box`) with the percentage as its text and the one-line reason carried in a `title`
+  attribute and an adjacent visible caption (`.retention-reason`), so the reason is legible
+  without hovering. Badges are forward-only: never added retroactively to an existing
+  artifact, only the next time `lesson-enrich` runs on new material.
 - **Original vs. added content is visually distinguishable throughout** — not just true in
   principle, but legible at a glance (the quality-bar sample uses two box styles/colors with
   a legend; a different visual system is fine as long as the distinction is as clear).
@@ -21,6 +40,18 @@ invariant wins — say so explicitly rather than silently complying with the pre
   existing source box) — see `../transcript-slide-extract/SKILL.md`. Include a timestamp
   reference automatically whenever the transcript has one, so the reader can jump back to that
   point in the recording.
+
+  When drafting `.transcript-box`/`.from-transcript` content, do not narrate the provenance
+  in prose ("This is from the lecturer:", "The lecturer also mentioned:") — the box style
+  and the `.label` already carry that distinction visually and structurally. State the
+  content directly. Reserve an explicit spoken-attribution phrase only for content that is
+  genuinely conversational in character (a first-person aside, a rhetorical question posed
+  to the class) where dropping the spoken framing would misrepresent it as written material.
+  Move the timestamp reference out of the sentence itself and into the box's `.label` (e.g.
+  "from the lecture — 4:52") — never as an inline phrase like "at 4:52, the lecturer notes."
+  Place each fold/box at the manifest's recorded **Anchor** point within the section (see
+  `../transcript-slide-extract/reference/transcript-gap-manifest.md`) rather than defaulting
+  to the section's start or end.
 - **Undergrad-level calibration**: assume the course's own baseline level by default (see the
   onboarding survey for how a user can shift this). For any concept flagged as newly
   introduced in the lecture being enriched, build up from first principles rather than

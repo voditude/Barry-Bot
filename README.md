@@ -1,48 +1,91 @@
-# barry-the-bot
+<!--
+This README is the public-facing setup guide for people installing Barry from GitHub.
+It does not describe the local/maintainer workflow. If you're developing Barry itself,
+see SESSION_HANDOFF.md, GitHub To Be Pushed.md, and design-enrichment.md instead — this
+file is intentionally generic and says nothing about the master/public-release branch
+split, real course content under courses/**, or anything else specific to this machine's
+setup.
+-->
 
-Claude Code skills for turning raw university lecture material into enriched,
-interactive study documents — additive explanations, worked derivations,
-diagrams, and practice questions layered on top of your own course content.
+# Barry the Bot
+
+**Barry doesn't summarize your lectures. He sits down next to you and explains them
+properly.**
+
+Claude Code skills that turn your own lecture material into full, worked-through study
+documents — every definition kept, nothing skipped, real derivations, diagrams, and practice
+questions layered on top.
+
+![License](https://img.shields.io/badge/license-MIT-green) ![Skills](https://img.shields.io/badge/skills-5-blue)
+
+[See it](#see-it) · [Install](#install) · [Skills](#skills) · [Subjects](#subjects) · [License](#license)
+
+---
+
+## See it
+
+Same concept, before and after. The lecture notes state the pigeonhole principle in one
+line:
+
+> "if m > n, at least two people get the same object"
+
+Barry adds the buildup right where that line appears, not a rewritten version of it:
+
+> **Why it's obviously true, before the formal statement:** if you have 5 pigeons and 4
+> holes, and every pigeon must go in a hole, you cannot possibly give each pigeon its own
+> hole — you only have 4. So some hole gets ≥ 2 pigeons. That's the whole idea; the "proof"
+> in the notes is just restating this in the language of words over an alphabet.
+
+*(From `samples/week1-enriched-sample.html` — a full worked sample, built the same way
+`lesson-enrich` builds a real lesson from your own material.)*
+
+The original line stays in the document, in full, either way — the explanation sits
+alongside it, never in place of it. Same for diagrams and practice questions: your own
+lecture's content is never condensed or replaced, only built on.
+
+## Install
+
+You'll need [Claude Code](https://docs.claude.com/en/docs/claude-code) already set up — these
+are Claude Code skills, not a standalone app. If you don't have it yet, set that up first.
+
+Then:
+
+```bash
+git clone https://github.com/voditude/Barry-Bot.git
+cp -r Barry-Bot/skills/* ~/.claude/skills/
+```
+
+That installs Barry for every project. To scope it to a single project instead, copy into
+that project's `.claude/skills/` folder rather than `~/.claude/skills/`.
+
+**First run:** drop your own course material under a `courses/<course-id>/` folder (see
+`skills/lesson-enrich/SKILL.md` for the exact expected layout), then ask Claude Code to use
+the `lesson-enrich` skill on one lecture's material. The first time you do this for a given
+course, Barry asks a handful of calibration questions — background level, how much
+explanation you want, diagram density — and remembers your answers for every lecture in that
+course after that.
 
 ## Skills
 
-- **`lesson-enrich`** — turns a lecture's transcript/notes, slides, and
-  (optionally) problem set into one additive companion document per lecture:
-  intuition, step-by-step derivations, worked examples, and diagrams, published
-  as an interactive HTML artifact. Every definition, proposition, proof, and
-  example from the source is kept in full — enrichment is layered on top, never
-  a replacement.
-- **`practice-weave`** — called by `lesson-enrich` to weave practice questions
-  into a lesson from the course's real problem set: matches real questions to
-  lesson sections via a concept-tag manifest, generates new questions in the
-  same style where a section would otherwise have no practice, and verifies
-  every generated answer by running real code before it's written down.
-- **`i-dont-get-it`** — a companion skill for when one specific topic from an
-  already-enriched lecture isn't landing. Produces a focused, first-principles,
-  example-led standalone explainer for just that topic.
-- **`transcript-slide-extract`** — called by `lesson-enrich` at ingest time when
-  a lecture transcript is present. Cross-checks it against the slides and
-  surfaces spoken content (asides, clarifications, extra examples) the slides
-  don't contain, so `lesson-enrich` can fold it into the enriched document.
-- **`assignment-solver`** — takes a dropped problem set or assignment for a
-  course already ingested by `lesson-enrich`/`practice-weave` and produces a
-  full worked-solution document, using only content that course actually
-  taught, verified and cited back to the exact week/lecture.
+| Skill | What it does |
+|---|---|
+| `lesson-enrich` | Turns a lecture's transcript/notes, slides, and problem set into one additive companion document — intuition, derivations, worked examples, diagrams — published as an interactive HTML artifact. |
+| `practice-weave` | Called by `lesson-enrich`. Weaves real problem-set questions into the lesson right where their technique is introduced, generates new ones where the source has none, and verifies every generated answer by running real code before it's written down. |
+| `i-dont-get-it` | Stand-alone skill for when one specific topic from an already-enriched lecture still isn't landing — a focused, first-principles, example-led explainer for just that topic. |
+| `transcript-slide-extract` | Called by `lesson-enrich` when a lecture transcript is present. Cross-checks it against the slides and surfaces what the lecturer said that the slides don't cover. |
+| `assignment-solver` | Takes a dropped assignment for a course Barry has already ingested and produces a full worked-solution document, using only content that course actually taught, cited back to the exact week. |
 
-See each skill's `SKILL.md` for full details, and `skills/*/reference/` for
-design/quality-bar references. `samples/` has a hand-built worked example
-(`week1-enriched-sample.md` / `.html`) showing what `lesson-enrich` +
-`practice-weave` output looks like together, built against an invented course
-so it's fully self-contained.
+See each skill's `SKILL.md` for full detail, and `skills/*/reference/` for the design and
+quality-bar references behind it.
 
-## Using these skills
+## Subjects
 
-Drop a skill folder into `~/.claude/skills/<name>/` (personal, all projects)
-or `.claude/skills/<name>/` inside a project (project-scoped), then invoke it
-by name in Claude Code. `lesson-enrich` and `i-dont-get-it` expect your own
-course material to live under a `courses/<course-id>/` folder — see
-`skills/i-dont-get-it/SKILL.md` and `skills/lesson-enrich/SKILL.md` for the
-expected layout.
+Barry ships with conventions for Math, Stochastic Modelling, Economics & Finance, Law,
+Engineering, Computer Science, and Marketing & Management. Coverage isn't uniform: Math and
+Stochastic Modelling are full packs, built and tuned against real course material; the rest
+are lighter starting points that improve the more you actually use them. If your subject
+isn't listed, tell Barry what you're studying — it can draft a starter pack for it on the
+spot.
 
 ## License
 

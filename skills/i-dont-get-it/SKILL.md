@@ -1,6 +1,6 @@
 ---
 name: i-dont-get-it
-description: Use when a specific topic from an already-enriched lecture isn't landing — the user says something like "I don't get X", "still confused about Y", "explain Z differently". Builds a focused, first-principles, example-led standalone explainer for that one topic. Requires a lesson-enrich artifact to already exist for the course; reads it as primary source (cross-checked against raw lecture material for correctness — see workflow step 2), not raw material alone.
+description: Use when a specific topic from an already-enriched lecture isn't landing — the user says something like "I don't get X", "still confused about Y", "explain Z differently". Builds a focused, first-principles, example-led standalone explainer for that one topic. Requires a lesson-enrich artifact to already exist for the course; reads it as primary source (cross-checked against raw lecture material for correctness — see workflow step 3), not raw material alone.
 ---
 
 # i-dont-get-it
@@ -31,11 +31,17 @@ artifact to ground it.
 
 ## Workflow
 
-1. **Locate the topic.** If the user names a course/week, use it directly. If
+1. **App-level onboarding (first run, once ever).** Check for `.barry-profile.md` at the repo
+   root (not inside any `courses/<id>/` folder). If absent, run
+   `../lesson-enrich/reference/app-onboarding.md`'s conversation in full before doing anything
+   else, then write the result there. If present, load it and continue — this is app-level,
+   run at most once per install regardless of which of the three direct-entry skills triggers
+   it first.
+2. **Locate the topic.** If the user names a course/week, use it directly. If
    not, search `courses/*/artifacts/*.html` for the enriched artifact(s)
    whose content matches the named topic. If more than one course could
    match, ask which one rather than guessing.
-2. **Read the source, both layers.**
+3. **Read the source, both layers.**
    - Read the matching section(s) of the enriched artifact — this is the
      primary source for scope, definitions, and notation the student is
      actually being taught.
@@ -46,7 +52,7 @@ artifact to ground it.
      the ground truth. If they disagree, trust the raw source, use its
      version, and flag the discrepancy to the user — do not silently repeat
      an error from the enriched artifact.
-3. **Search for better pedagogy, not better math.** Use web search to find
+4. **Search for better pedagogy, not better math.** Use web search to find
    analogies, real-world motivating hooks, or alternate framings of the
    concept (e.g. the rock-paper-scissors example for transitivity, or the
    fractions/RSA motivation for the totient function). Never let a web
@@ -54,7 +60,7 @@ artifact to ground it.
    those still have to match what the student is being taught. Web search
    is for finding a better way to explain the same thing, not a second
    source of mathematical truth.
-4. **Draft using the fixed method, every time:**
+5. **Draft using the fixed method, every time:**
    - **Motivate** — why would anyone care about this, before any formula.
    - **Build from scratch** — construct the idea on small, concrete numbers
      the reader can check by hand, before generalizing.
@@ -68,7 +74,7 @@ artifact to ground it.
    No strict source/added provenance labeling is required here (unlike
    `lesson-enrich`) — this is a freeform rebuild, not an additive companion.
    It still has to be factually correct throughout.
-5. **Design: two tiers, not one template.** Read
+6. **Design: two tiers, not one template.** Read
    `reference/quality-bar-sample.html` and `reference/design-tiers.md` before
    writing any HTML.
    - **Tier 1 (always reuse):** the structural scaffolding — masthead,
@@ -85,13 +91,13 @@ artifact to ground it.
      "ground it in the subject" rule. A different subject needs its own
      accent and its own diagram types, chosen the same way, not these ones
      reused. Load `artifact-design` before choosing them.
-6. **Verify by hand, carefully.** Every worked value gets derived step by
+7. **Verify by hand, carefully.** Every worked value gets derived step by
    step in the document, the way the reference sample does (e.g. checking
    inclusion–exclusion against an actual sieve grid). No mandatory
    code-verification script is required — this is lighter than
    `practice-weave`'s discipline — but a claimed numeric result must be
    shown arriving at that number, not just stated.
-7. **Publish and save.** Before publishing, run
+8. **Publish and save.** Before publishing, run
    `python skills/lesson-enrich/reference/scripts/check_math_html_safety.py <the-generated-file>.html`
    and treat a non-zero exit as a blocker, not a warning — same rule
    `lesson-enrich/SKILL.md` states, and for the same reason: raw `<`/`>`
@@ -107,7 +113,7 @@ artifact to ground it.
 
 | Mistake | Fix |
 |---|---|
-| Treating the enriched artifact as ground truth with no cross-check | Step 2 requires checking against raw lecture source before relying on a definition/value. |
+| Treating the enriched artifact as ground truth with no cross-check | Step 3 requires checking against raw lecture source before relying on a definition/value. |
 | Using web search to find a different definition or notation than the course uses | Web search is for pedagogy (analogies, motivation), never for overriding the course's own math. |
 | Reusing the amber palette or the Venn/sieve/Hasse diagrams for an unrelated subject | Only Tier 1 (structure) is reusable. Tier 2 (palette, diagrams) is re-derived per subject — see `reference/design-tiers.md`. |
 | Following lesson-enrich's provenance-labeling/additive rules here | Those are `lesson-enrich` invariants, not this skill's. This is a freeform rebuild — reorder and motivate freely, as long as it stays correct. |

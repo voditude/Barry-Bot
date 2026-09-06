@@ -28,25 +28,31 @@ rendering, box styles, build pipeline) rather than maintaining a second copy of 
 - `../practice-weave/reference/verification.md` — the two verification lanes (computational,
   proof-based) to reuse directly; don't fork a separate copy
 - `../lesson-enrich/reference/scripts/check_math_html_safety.py` — the mandatory pre-publish
-  gate (see step 9)
+  gate (see step 10)
 - `../lesson-enrich/subjects/<subject>/` — the course's existing subject pack: diagram
   tooling and pre-built KaTeX CSS, reused as-is
 
 ## Workflow
 
-1. **Identify the course and confirm.** Auto-detect which `courses/<course-id>/` folder the
+1. **App-level onboarding (first run, once ever).** Check for `.barry-profile.md` at the repo
+   root (not inside any `courses/<id>/` folder). If absent, run
+   `../lesson-enrich/reference/app-onboarding.md`'s conversation in full before doing anything
+   else, then write the result there. If present, load it and continue — this is app-level,
+   run at most once per install regardless of which of the three direct-entry skills triggers
+   it first.
+2. **Identify the course and confirm.** Auto-detect which `courses/<course-id>/` folder the
    dropped file belongs to, by matching its filename and content against existing course
    folders. State the guess and wait for the user to confirm before proceeding — never solve
    against a guessed course without confirmation. If nothing matches, or the drop wasn't
    accompanied by an explicit request, ask directly rather than assuming ("This looks like an
    assignment for `<course-id>` — want me to run Assignment Solver on it?").
-2. **Check for onboarding calibration.** Look for `<course-folder>/.enrich-preferences.md`
+3. **Check for onboarding calibration.** Look for `<course-folder>/.enrich-preferences.md`
    (written by `lesson-enrich`'s onboarding). If present, read it and match its tone/depth
    calibration in the write-up — the student is moving between lecture notes and solutions in
    one course, and a jarring voice shift between them is worse than reusing the existing
    calibration. If absent, proceed with a plain, direct default voice; don't run onboarding
    yourself, that's `lesson-enrich`'s job.
-3. **Check the precondition, then ingest the problem set/assignment.** Confirm the course
+4. **Check the precondition, then ingest the problem set/assignment.** Confirm the course
    folder has *some* ingested material already (`reference/source-priority.md`'s precondition
    check) — if not, stop and tell the user to run `lesson-enrich` first. Otherwise, read the
    *entire* content of the dropped file(s) in full — never infer scope from the filename alone,
@@ -57,25 +63,25 @@ rendering, box styles, build pipeline) rather than maintaining a second copy of 
    OCR/math-parsing tool exists in this repo. Derive a short slug for this assignment from its
    own name/number (lowercase, no spaces — e.g. `assignment1`, `tute4`), used for every file
    this skill creates.
-4. **Gather source content per problem, in priority order.** Follow
+5. **Gather source content per problem, in priority order.** Follow
    `reference/source-priority.md` exactly: the relevant week's LessonEnrich artifact first,
    then its PracticeWeave manifest for cross-checking, then raw lecture source only as a
    fallback for that week. Don't skip straight to raw source when an enriched artifact exists
    for that week — it's both more concise and already vetted.
-5. **Match each problem to its taught technique(s).** Using the gathered content, identify
+6. **Match each problem to its taught technique(s).** Using the gathered content, identify
    which course-taught method applies. Apply `reference/scope-and-citation.md` in full: the
    hard boundary, the two narrow exceptions (matches lecture material after a closer look, or
    is expected prerequisite knowledge), the inline flag for anything else, and the
    single-most-efficient-method rule when the course itself teaches more than one approach to
    the same problem type.
-6. **Draft the full worked solution per problem.** Follow the box/layout conventions already
+7. **Draft the full worked solution per problem.** Follow the box/layout conventions already
    established in this project's math documents: `.source-box` quoting the problem as set
    verbatim, `.add-box` units for each stage of the solution (labeled by role — setup,
    derivation, etc.), inline `.step`/`.step-label` for individual steps, `.result` for the
    final answer, `.pitfall` for a common-mistake call-out where one is worth flagging. Cite
    using the exact format in `reference/scope-and-citation.md` immediately after each
    technique is used. Never withhold the final answer or a key step.
-7. **Verify every computed answer before writing it down.** Reuse
+8. **Verify every computed answer before writing it down.** Reuse
    `practice-weave/reference/verification.md`'s two lanes directly — computational
    (closed-form vs. independent brute-force/enumeration check) and proof-based (structured
    self-check + small-n spot-check). Keep verification lightweight: prefer a known identity or
@@ -88,13 +94,13 @@ rendering, box styles, build pipeline) rather than maintaining a second copy of 
    `assignmentN-verify.py` pattern in this repo (sympy for symbolic work, an
    `ok = lambda label, a, b: print(PASS/FAIL, a == b)`-style helper, one check per computed
    result). Run it and confirm every check passes before drafting the answer into the document.
-8. **Diagrams, only where one earns its place.** If a solution benefits from a diagram, reuse
+9. **Diagrams, only where one earns its place.** If a solution benefits from a diagram, reuse
    the course's existing subject pack's `diagram_style.py` (under
    `skills/lesson-enrich/subjects/<subject>/assets/scripts/`) rather than styling one from
    scratch. Save generated images to `courses/<course-id>/assets/<assignment-slug>/`, and
    reference them in the body fragment with an `{{IMG:relative/path.png}}` placeholder — real
    tool calls only, never a described visual.
-9. **Assemble, verify, and publish.** If `courses/<course-id>/build_artifact.py` doesn't
+10. **Assemble, verify, and publish.** If `courses/<course-id>/build_artifact.py` doesn't
    exist yet, find any other course folder under `courses/` that already has one and copy it
    in verbatim — it's a generic, per-course copy of the same assembly script, not something to
    rewrite from scratch, and not tied to any particular course. If no course folder anywhere
@@ -117,10 +123,11 @@ rendering, box styles, build pipeline) rather than maintaining a second copy of 
    `python skills/lesson-enrich/reference/scripts/check_math_html_safety.py <the-generated-file>.html`
    and treat a non-zero exit as a blocker, not a warning** — it catches raw `<`/`>` inside a
    formula and an unembedded math-alphabet font, neither of which shows up as a KaTeX parse
-   error (see `lesson-enrich/SKILL.md` step 7 for the full incident history). Once it passes,
+   error (see `lesson-enrich/SKILL.md` step 8 for the full incident history). Once it passes,
    the file at `courses/<course-id>/artifacts/<assignment-slug>.html` is the persisted
    deliverable — also publish it as a live Claude Artifact in the same turn, so the student
-   gets working KaTeX rendering immediately without opening a local file.
+   gets working KaTeX rendering immediately without opening a local file. After publishing,
+   run `../lesson-enrich/reference/feedback-loop.md`'s prompt and branch logic.
 
 ## Common mistakes
 
@@ -136,4 +143,4 @@ rendering, box styles, build pipeline) rather than maintaining a second copy of 
 | Verifying with a large brute-force search "to be extra sure" | Keep verification bounded (n≤4–6 style) and prefer known identities. A larger brute force doesn't add confidence past what the small case already proves, and burns the user's tokens. |
 | Solving against a guessed course without the user confirming it | Always state the auto-detected course and wait for confirmation before drafting anything. |
 | Rebuilding a per-section "Ask about this section" control into the output | That control was retired project-wide (see `design-enrichment.md` §6) — the current `.build/head.html`/`.build/tail.html` no longer carry its wiring. Don't hand-roll a replacement; point the student at the separate `i-dont-get-it` skill instead if a concept doesn't land. |
-| Asserting a computed answer without running the verification script | Every computed answer is verified by an independently-run check before it's written into the document — see step 7. |
+| Asserting a computed answer without running the verification script | Every computed answer is verified by an independently-run check before it's written into the document — see step 8. |
