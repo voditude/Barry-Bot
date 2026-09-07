@@ -49,7 +49,15 @@ understand what that tier means before using one.
 3. **Identify the subject pack.** Determine the course's subject area and read
    `subjects/<subject>/PACK.md`. If no pack exists yet for that subject, say so explicitly to
    the user rather than improvising subject-specific conventions.
-4. **Ingest.** Check for `<course-folder>/course-notes.md` first and follow anything it says
+4. **Ingest.** If the material hasn't been placed under a `courses/<course-id>/` folder yet
+   (the user handed you files directly, e.g. a slide deck and a transcript, without setting
+   up any folder themselves), create that structure yourself before anything else in this
+   step: infer a `<course-id>` slug from what the user has told you about the course, or ask
+   directly if it's genuinely ambiguous ("what should I call this course as a folder name?"),
+   then create `courses/<course-id>/source/lectures/` (and `source/problem-sets/` too, if a
+   problem set was also given) per the layout in `design-enrichment.md` §3b, and copy the
+   dropped files there. The user is never required to build this structure by hand first.
+   Check for `<course-folder>/course-notes.md` first and follow anything it says
    about the source material's shape (e.g. a cumulative problem-set document rather than one
    file per lecture — see `practice-weave/SKILL.md` step 1 for why this matters). Pull the
    lecture's transcript/notes, slides (if present), and matching problem set for this lecture,

@@ -60,9 +60,9 @@ cp -r Barry-Bot/skills/* ~/.claude/skills/
 That installs Barry for every project. To scope it to a single project instead, copy into
 that project's `.claude/skills/` folder rather than `~/.claude/skills/`.
 
-**First run:** drop your own course material under a `courses/<course-id>/` folder (see
-`skills/lesson-enrich/SKILL.md` for the exact expected layout), then ask Claude Code to use
-the `lesson-enrich` skill on one lecture's material.
+**First run:** give Barry your lecture material (slides, a transcript, whatever you have)
+and ask it to run the `lesson-enrich` skill. Barry sets up the course folder for you. You
+don't need to build any folder structure by hand.
 
 The first time you use Barry at all, it asks a few quick questions: your name, field of
 study, subjects. It also infers how you like things explained by showing you two ways of
