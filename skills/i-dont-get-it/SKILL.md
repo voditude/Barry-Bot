@@ -73,7 +73,10 @@ artifact to ground it.
      original material.
    No strict source/added provenance labeling is required here (unlike
    `lesson-enrich`) — this is a freeform rebuild, not an additive companion.
-   It still has to be factually correct throughout.
+   It still has to be factually correct throughout. Prose style follows
+   `../lesson-enrich/reference/tone-guide.md` in full — the same forbidden
+   fillers and forbidden AI-sounding patterns apply here as in
+   `lesson-enrich`'s own output.
 6. **Design: two tiers, not one template.** Read
    `reference/quality-bar-sample.html` and `reference/design-tiers.md` before
    writing any HTML.

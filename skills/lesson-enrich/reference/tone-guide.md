@@ -22,6 +22,26 @@ me" without losing information, it is filler — cut it or replace it with the m
 - Pleasantries and encouragement: "great question", "let's dive in", "don't worry, this gets
   easier". None of this belongs in study material.
 - Restating the conclusion in different words as if it were a new sentence.
+- "Not X, but Y" and "A, not B" used as a stylistic tic rather than a real contrast the reader
+  needed. State the true thing plainly.
+
+  **Bad**: "This isn't a coincidence, but a direct consequence of the bijection."
+  **Good**: "This follows directly from the bijection."
+- Em dashes. Use a comma, a period, or a colon instead.
+- A noun phrase followed by a past participle as a standalone sentence fragment, used for
+  effect: "The mechanism, revealed." "The answer, buried in the third line." Write a full
+  sentence with a real verb.
+- Cryptic or decorative metaphors that need decoding before they explain anything. If a
+  metaphor doesn't make the mechanism clearer on first read, delete it and state the mechanism
+  directly.
+- AI buzzwords and hollow intensifiers: "delve", "leverage", "seamless", "robust", "elevate",
+  "unlock", "landscape", "tapestry", "testament to", "underscores", "plays a crucial role", "in
+  today's [X]". None of these belong in study material.
+- Sentences with more than one comma-joined clause doing separate jobs. One claim per
+  sentence; split anything longer.
+- A constructed descriptive header standing in for a plain lead-in word: "Why the kernel
+  actually bursts, before the formal statement:" where "Intuitively:" would do. Prefer the
+  plain word.
 
 ## Required
 

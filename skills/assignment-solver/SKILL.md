@@ -80,7 +80,9 @@ rendering, box styles, build pipeline) rather than maintaining a second copy of 
    derivation, etc.), inline `.step`/`.step-label` for individual steps, `.result` for the
    final answer, `.pitfall` for a common-mistake call-out where one is worth flagging. Cite
    using the exact format in `reference/scope-and-citation.md` immediately after each
-   technique is used. Never withhold the final answer or a key step.
+   technique is used. Never withhold the final answer or a key step. Prose style follows
+   `../lesson-enrich/reference/tone-guide.md` in full — the same forbidden fillers and
+   forbidden AI-sounding patterns apply here as in `lesson-enrich`'s own output.
 8. **Verify every computed answer before writing it down.** Reuse
    `practice-weave/reference/verification.md`'s two lanes directly — computational
    (closed-form vs. independent brute-force/enumeration check) and proof-based (structured
