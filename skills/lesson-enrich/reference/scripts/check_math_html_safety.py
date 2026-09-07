@@ -115,8 +115,9 @@ def check_file(path: str) -> bool:
         ok = False
         print(f"FAIL {path}: math-alphabet command(s) used without embedded font")
         for cmd, font_family, count in font_violations:
-            print(f"    \\{cmd} used {count}x but {font_family} has no embedded @font-face "
-                  f"(add it to build_katex_css.py's KEEP set and re-run)")
+            print(f"    \\{cmd} used {count}x but {font_family} has no embedded @font-face. "
+                  f"Fix: run the subject's assets/scripts/build_katex_css.py "
+                  f"--add-font {font_family}-Regular, then re-run this check.")
 
     if ok:
         n = len(find_math_regions(html))

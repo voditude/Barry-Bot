@@ -105,7 +105,13 @@ understand what that tier means before using one.
    in the wrong font with zero error). Neither produces a console error or a KaTeX parse
    failure, so nothing short of this check (or a rendered screenshot) surfaces them — see the
    script's docstring for the full incident writeup if the reason isn't obvious from the
-   symptom. After publishing, run `reference/feedback-loop.md`'s prompt and branch logic.
+   symptom. **On failure, self-remediate before asking the user anything.** A raw `<`/`>`
+   violation: escape it in the source (`\lt`/`\gt`, or `&lt;`/`&gt;`) and re-run the check. A
+   missing-font violation: the check's own output names the exact fix (re-run that subject's
+   `assets/scripts/build_katex_css.py --add-font <FontName>-Regular`), so run it and re-run
+   the check. Only surface this to the user if remediation genuinely isn't possible (e.g. no
+   network access to fetch the font from cdnjs) or the file still fails after it. After
+   publishing, run `reference/feedback-loop.md`'s prompt and branch logic.
 
 ## Common mistakes
 
